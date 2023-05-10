@@ -2,12 +2,8 @@ def handle_exceptions(f):
     def wrapper(*args, **kw):
         try:
             return f(*args, **kw)
-        except CountryCodeException:
-            print("Nomor yang anda berikan kurang tepat.")
-        except InternetException:
-            print("Internet lambat. Coba kembali nanti.")
-        except CallTimeException:
-            print("Program menunggu terlalu lama.")
+        except Exception as e:
+            print(str(e))
         finally:
             print("Program selesai.")
     return wrapper

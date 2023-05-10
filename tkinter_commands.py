@@ -44,7 +44,7 @@ def send_with_picture(msg: str, img_path: str, ranged=False, start: int=0, stop:
     for data in datas:
         phone = format_number(data["phone"])
         try:
-            send_message_with_image(phone, msg, img_path)
+            send_message_with_image(phone, msg, r"{}".format(img_path))
         except Exception as e:
             return str(e)
     return True

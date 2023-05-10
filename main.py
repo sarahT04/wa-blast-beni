@@ -2,6 +2,9 @@ from tkinter_commands import *
 import tkinter
 from tkinter import messagebox
 
+# Message doesn't work because you need elevated permission
+# and also, need to figure how to raw 
+
 # States
 MESSAGE_EMPTY = True
 IMG_PATH_EMPTY = True

@@ -22,6 +22,7 @@ PyScreeze==0.1.28
 python-dotenv==1.0.0
 pytweening==1.0.7
 pywhatkit==5.4
+pywin32==306
 requests==2.30.0
 soupsieve==2.4.1
 urllib3==2.0.2
