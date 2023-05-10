@@ -1,5 +1,5 @@
-from .utils.database import *
-from .utils.functions import *
+from utils.database import *
+from utils.functions import *
 
 def add_data(name: str, phone: str) -> bool | str:
     """Tambahkan data ke database
