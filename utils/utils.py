@@ -17,6 +17,9 @@ def format_number(number: str) -> str:
         return formatted_number
     return "+" + formatted_number
 
+def format_data(id: int, full_name: str, name: str, phone: str):
+    return { "id": id, "full_name" : full_name.title(), "name" : name.title(), "phone" : format_number(phone) }
+
 class ServerError(Exception):
     "Server error, coba lagi nanti"
     pass

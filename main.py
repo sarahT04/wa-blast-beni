@@ -8,13 +8,22 @@ from tkinter import messagebox
 # States
 MESSAGE_EMPTY = True
 IMG_PATH_EMPTY = True
+DOCUMENTS_COUNT = get_all_documents_count()
+DROPDOWN_OPTIONS = get_collection_names()
 
 # Return messageboxes
 def error_message(e: str) -> None:
     messagebox.showerror(title= "Error", message=e)
+    return
 
 def success_message(e: str) -> None:
     messagebox.showinfo(title="Berhasil!", message=e)
+    return
+
+def on_dropdown_change(*args):
+    global CURRENT_COLLECTION
+    CURRENT_COLLECTION = dropdown_value.get()
+    # print(f"Current dropdown: {CURRENT_COLLECTION}")
     
 # Get datas
 def get_img_path():
@@ -67,15 +76,17 @@ def handler_send_to_all():
         if success is True:
             success_message("Pesan anda telah dikirim ke semua kontak")
             return
+        error_message(success)
     # If image is empty , then we send with no picture.
     elif IMG_PATH_EMPTY and not MESSAGE_EMPTY:
         success = send_to_all(message)
         if success is True:
             success_message("Pesan anda telah dikirim ke semua kontak")
             return
+        error_message(success)
     # Create an error notification  
     else:  
-        error_message(success)
+        error_message("Ada kesalahan di handler_send_to_all")
         
 def handler_message_in_range():
     # Get start and stop integer
@@ -157,9 +168,9 @@ for widget in message_data_frame.winfo_children():
 send_with_range_frame =tkinter.LabelFrame(frame, text="Kirim dengan range")
 send_with_range_frame.grid(row= 3, column=0, padx=20, pady=10)
 
-start_label = tkinter.Label(send_with_range_frame, text="Mulai dari")
+start_label = tkinter.Label(send_with_range_frame, text="Mulai dari (1)")
 start_label.grid(row=0, column=0)
-end_label = tkinter.Label(send_with_range_frame, text="Sampai dengan")
+end_label = tkinter.Label(send_with_range_frame, text=f"Sampai dengan ({DOCUMENTS_COUNT})")
 end_label.grid(row=0, column=1)
 
 start_entry = tkinter.Spinbox(send_with_range_frame)
@@ -167,18 +178,25 @@ start_entry.grid(row=1, column=0)
 end_entry = tkinter.Spinbox(send_with_range_frame)
 end_entry.grid(row=1, column=1)
 
-submit_button = tkinter.Button(send_with_range_frame, text="Kirim", command=handler_message_in_range)
-submit_button.grid(row=1, column=2)
+send_with_range_button = tkinter.Button(send_with_range_frame, text="Kirim", command=handler_message_in_range)
+send_with_range_button.grid(row=1, column=2)
 
 for widget in send_with_range_frame.winfo_children():
     widget.grid_configure(padx=10, pady=5)
 
-
 # Send to all button
 send_to_all_frame = tkinter.LabelFrame(frame)
 send_to_all_frame.grid(row=4, column=0, padx=20, pady=10)
+
 send_to_all_button = tkinter.Button(send_to_all_frame, text="Kirim ke semua contact", command=handler_send_to_all)
+send_to_all_button.grid(row=1, column=0, padx=20, pady=10, sticky='nesw')
+dropdown_value = tkinter.StringVar(value=CURRENT_COLLECTION)
+dropdown_value.trace('w', on_dropdown_change)
+dropdown = tkinter.OptionMenu(send_to_all_frame, dropdown_value, *DROPDOWN_OPTIONS)
 send_to_all_button.grid(row=0, column=0, padx=20, pady=10, sticky='nesw')
+
+for widget in send_to_all_frame.winfo_children():
+    widget.grid_configure(padx=10, pady=5)
 
  
 window.mainloop()

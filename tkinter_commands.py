@@ -1,5 +1,12 @@
 from utils.database import *
 from utils.functions import *
+from utils.utils import format_number
+
+def get_documents_count() -> int:
+    return get_all_documents_count()
+    
+def get_collection_names() -> list:
+    return get_all_collection_names()
 
 def add_data(name: str, phone: str) -> bool | str:
     """Tambahkan data ke database

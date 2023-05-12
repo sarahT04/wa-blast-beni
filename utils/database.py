@@ -1,19 +1,13 @@
-import os
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from .utils import format_number, ServerError
+from .utils import format_data, ServerError
+from db.utils import client
 
-# Getting the data from .env file
-from dotenv import load_dotenv
-load_dotenv()
+def get_all_collection_names() -> list:
+    """Mendapatkan semua nama koleksi di database
 
-# DB Url
-DB_URL = os.getenv('DB_URL')
-
-# Create a new mongo client and connect to the server
-client = MongoClient(DB_URL, server_api=ServerApi('1'))
-# Defining the collection
-phone_collection = client["wa-blast"]["datas"]
+    Returns:
+        list: Nama koleksi
+    """
+    return db.list_collection_names()
 
 def get_data_with_range(start: int, stop: int) -> list:
     """Mendapatkan data sesuai dengan jangkauan yang diinginkan
@@ -25,7 +19,7 @@ def get_data_with_range(start: int, stop: int) -> list:
     Returns:
         list: Data dari 2-10 (contoh)
     """
-    return list(phone_collection.find({}).skip(start).limit(stop))
+    return list(collection.find({}).skip(start).limit(stop))
     
 
 def get_all_data() -> list:
@@ -34,7 +28,7 @@ def get_all_data() -> list:
     Returns:
         list: List dari semua data
     """
-    return list(phone_collection.find({}))
+    return list(collection.find({}))
 
 def get_all_documents_count() -> int:
     """Memberikan banyaknya data di database
@@ -42,9 +36,9 @@ def get_all_documents_count() -> int:
     Returns:
         int: Banyanknya data di database
     """
-    return (phone_collection.count_documents({}))
+    return (collection.count_documents({}))
 
-def insert_data_formatted(name: str, phone: str) -> bool | str:
+def insert_data_formatted(id: int, full_name: str, name: str, phone: str) -> bool | str:
     """Insert data ke database
 
     Args:
@@ -54,12 +48,11 @@ def insert_data_formatted(name: str, phone: str) -> bool | str:
     Raises:
         ServerError: bila data tidak bisa dimasukkan ke server
     """
-    
     # Formatting the data
-    data = {"name": name.title(), "phone": format_number(phone)}
+    data = format_data(id, full_name, name, phone)
     try:
         # Inserting it
-        _ = phone_collection.insert_one(data)
+        _ = collection.insert_one(data)
         # If inserting has inserted_id, then it succesfully inserted.
         if _.inserted_id:
             print("Data ditambahkan di database!")
@@ -68,3 +61,12 @@ def insert_data_formatted(name: str, phone: str) -> bool | str:
     except Exception as e:
         print(str(e))
         return str(e)
+
+
+# Defining the collection
+db = client["wa-blast"]
+CURRENT_COLLECTION = get_all_collection_names()[0]
+collection = db[CURRENT_COLLECTION]
+
+# if __name__ == "__main__":
+#     print(get_all_collection_names())
