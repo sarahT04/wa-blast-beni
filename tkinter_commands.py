@@ -1,14 +1,13 @@
 from utils.database import *
 from utils.functions import *
-from utils.utils import format_number
+import os
 
-def get_documents_count() -> int:
-    return get_all_documents_count()
-    
-def get_collection_names() -> list:
-    return get_all_collection_names()
+def get_image_path(img_name: str) -> str:
+    current_path = os.getcwd()
+    image_path = os.path.join(current_path, "img", img_name)
+    return image_path
 
-def add_data(name: str, phone: str) -> bool | str:
+def add_data(collection_name: str, full_name: str, name: str, phone: str) -> bool | str:
     """Tambahkan data ke database
 
     Args:
@@ -19,23 +18,28 @@ def add_data(name: str, phone: str) -> bool | str:
         bool: bila berhasil
         str: pesan error bila tidak berhasil
     """
-    return insert_data_formatted(name, phone)
+    _id = get_all_documents_count(collection_name) + 1
+    return insert_data_formatted(_id, full_name, name, phone)
 
-def send_message_handler(datas: list, msg: str) -> bool | str:
+def send_message_handler(datas: list, msg: str, img_path: str | bool=False) -> bool | str:
     for data in datas:
-        phone = format_number(data["phone"])
+        _id, full_name, name, phone = data.values()
+        msg = msg.format(nama=name, nama_panjang=full_name)
         try:
-            send_instant_message(phone, msg)
+            if img_path is not False:
+                send_message_with_image(phone, msg, r"{}".format(get_image_path(img_path)))
+            else:
+                send_instant_message(phone, msg)
         except Exception as e:
             return str(e)
     return True
 
-def send_with_picture(msg: str, img_path: str, ranged=False, start: int=0, stop: int=10) -> bool | str:
+def send_with_picture(collection_name: str, msg: str, img_path: str, ranged=False, start: int=0, stop: int=10) -> bool | str:
     """Kirim pesan dengan gambar
 
     Args:
         msg (str): Pesan yang ingin dikirim
-        img_path (str): Path ke file image (ex: C://Users/BENI/image.png)
+        img_path (str): Path ke file image di folder /img/ di program ini.
         ranged (bool, optional): Bila menggunakan range. Defaults to False.
         start (int, optional): Mulai dari. Defaults to 0.
         stop (int, optional): Sampai dengan. Defaults to 10.
@@ -45,18 +49,12 @@ def send_with_picture(msg: str, img_path: str, ranged=False, start: int=0, stop:
         str: pesan error bila tidak berhasil
     """
     if ranged is True:
-        datas = get_data_with_range(start, stop)
+        datas = get_data_with_range(collection_name, start, stop)
     else:
-        datas = get_all_data()
-    for data in datas:
-        phone = format_number(data["phone"])
-        try:
-            send_message_with_image(phone, msg, r"{}".format(img_path))
-        except Exception as e:
-            return str(e)
-    return True
+        datas = get_all_data(collection_name)
+    return send_message_handler(datas, msg, img_path)
 
-def send_in_range(msg: str, start: int, stop: int) -> bool | str:
+def send_in_range(collection_name: str, msg: str, start: int, stop: int) -> bool | str:
     """Kirim pesan dengan range
 
     Args:
@@ -68,10 +66,10 @@ def send_in_range(msg: str, start: int, stop: int) -> bool | str:
         bool: bila berhasil
         str: pesan error bila tidak berhasil
     """
-    datas = get_data_with_range(start, stop)
+    datas = get_data_with_range(collection_name, start, stop)
     return send_message_handler(datas, msg)
 
-def send_to_all(msg: str) -> bool | str:
+def send_to_all(collection_name: str, msg: str) -> bool | str:
     """Kirim pesan kepada semua yang ada di database
 
     Args:
@@ -81,5 +79,5 @@ def send_to_all(msg: str) -> bool | str:
         bool: bila berhasil
         str: pesan error bila tidak berhasil
     """
-    datas = get_all_data()
+    datas = get_all_data(collection_name)
     return send_message_handler(datas, msg)

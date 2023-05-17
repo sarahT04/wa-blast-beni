@@ -9,7 +9,7 @@ CLOSE_TAB = True
 @handle_exceptions
 def send_message_with_image(number, msg, img_path):
     print("Bekerja...")
-    sendwhats_image(receiver=number, img_path=img_path, caption=msg, close_time=CLOSE_TIME, wait_time=WAIT_TIME + 10, tab_close=CLOSE_TAB)
+    sendwhats_image(receiver=number, img_path=img_path, caption=msg, close_time=CLOSE_TIME + 3, wait_time=WAIT_TIME + 10, tab_close=CLOSE_TAB)
 
 @handle_exceptions
 def send_instant_message(phone: str, msg: str) -> None:
