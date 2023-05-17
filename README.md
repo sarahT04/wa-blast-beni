@@ -1,5 +1,5 @@
 # WA Blast program using Pymongo, Tkinter, and Pywhatkit.
-Click Documentation URL (here)[https://drive.google.com/drive/folders/1g_TNEpyBlNGRvkmXnso07JIAdIKlDcL1?usp=sharing].
+Click Documentation URL [here](https://drive.google.com/drive/folders/1g_TNEpyBlNGRvkmXnso07JIAdIKlDcL1?usp=sharing).
 
 Currently, this program supports sending messages and picture to all phone numbers inside mongodb and even ranged (according to the _id) and also adding new phone number to mongodb collection. This project was made to be used by Indonesians. 
 
