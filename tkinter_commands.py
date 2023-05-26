@@ -24,12 +24,12 @@ def add_data(collection_name: str, full_name: str, name: str, phone: str) -> boo
 def send_message_handler(datas: list, msg: str, img_path: str | bool=False) -> bool | str:
     for data in datas:
         _id, full_name, name, phone = data.values()
-        msg = msg.format(nama=name, nama_panjang=full_name)
+        new_msg = msg.format(nama=name, nama_panjang=full_name)
         try:
             if img_path is not False:
-                send_message_with_image(phone, msg, r"{}".format(get_image_path(img_path)))
+                send_message_with_image(phone, new_msg, r"{}".format(get_image_path(img_path)))
             else:
-                send_instant_message(phone, msg)
+                send_instant_message(phone, new_msg)
         except Exception as e:
             return str(e)
     return True
@@ -81,3 +81,6 @@ def send_to_all(collection_name: str, msg: str) -> bool | str:
     """
     datas = get_all_data(collection_name)
     return send_message_handler(datas, msg)
+
+if __name__ == '__main__':
+    send_to_all("cfi", "hi {nama}!")
