@@ -49,7 +49,20 @@ def ping_db():
         print(e)
 
 if __name__ == "__main__":
-    setup()
-    dbs = db.list_collection_names()
-    for name in dbs:
-        print(list(db[name].find({})))
+    try:
+        while True:
+            user_input = input('Mau setup atau tambah data? [setup/tambah]: ')
+            if user_input == "setup":
+                setup()
+                dbs = db.list_collection_names()
+                for name in dbs:
+                    print(list(db[name].find({})))
+            elif user_input == "tambah":
+                insert_bulk_datas(FILE_PATH)
+                print('Selesai')
+            else:
+                print("Tolong tulis hanya 'setup' atau 'tambah'.")
+    except Exception as e:
+        print("Error: ")
+        print(str(e))
+    
